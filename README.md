@@ -1,2 +1,2 @@
 # HW-2
-Repository storing HW 2 of STOR 390
+This repository is meant to store and display HW 2 of STOR 390.
