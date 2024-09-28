@@ -1,0 +1,72 @@
+---
+title: "HW 2 Student"
+author: "Seth Hall"
+date: "09/26/2024"
+output: 
+  html_document:
+    number_sections: true
+---
+
+This homework is meant to illustrate the methods of classification algorithms as well as their potential pitfalls.  In class, we demonstrated K-Nearest-Neighbors using the `iris` dataset.  Today I will give you a different subset of this same data, and you will train a KNN classifier.  
+
+```{r, echo = FALSE}
+set.seed(123)
+library(class)
+
+df <- data(iris) 
+
+normal <-function(x) {
+  (x -min(x))/(max(x)-min(x))   
+}
+
+iris_norm <- as.data.frame(lapply(iris[,c(1,2,3,4)], normal))
+
+subset <- c(1:45, 58, 60:70, 82, 94, 110:150)
+iris_train <- iris_norm[subset,] 
+iris_test <- iris_norm[-subset,] 
+
+iris_target_category <- iris[subset,5]
+iris_test_category <- iris[-subset,5]
+
+
+```
+
+#
+Above, I have given you a training-testing partition.  Train the KNN with $K = 5$ on the training data and use this to classify the 50 test observations.  Once you have classified the test observations, create a contingency table -- like we did in class -- to evaluate which observations your algorithm is misclassifying.   
+
+```{r}
+set.seed(123)
+#STUDENT INPUT
+knn_pred <- knn(iris_train,iris_test,cl = iris_target_category,k = 5)
+# Contingency table to evaluate which observations the algorithm is misclassifying #
+tab <- table(knn_pred,iris_test_category)
+
+accuracy <- function(x){
+  sum(diag(x)/(sum(rowSums(x)))) * 100
+}
+accuracy(tab)
+
+summary(iris_test_category)
+summary(iris_target_category)
+```
+
+#
+
+Discuss your results.  If you have done this correctly, you should have a classification error rate that is roughly 20% higher than what we observed in class.  Why is this the case? In particular run a summary of the `iris_test_category` as well as `iris_target_category` and discuss how this plays a role in your answer.  
+
+*STUDENT INPUT* 
+This is the case because of the way that the training and testing subsets were chosen. In class, the entire dataset with all 150 elements were used. Also, when the summary function of the Iris training and testing sets was called in class, there was less variation in the measures of spread and center than the training and testing subsets used in HW2. The training and testing observations in class were all centered ar around 50 out of the 150 total elements each, while in HW 2 some are much lower and the others much higher. For example, in iris_test_category of HW2, there were an observed 5 elements of setosa, 9 elements of virginica, and 36 of versicolor. 
+#
+
+Choice of $K$ can also influence this classifier.  Why would choosing $K = 6$ not be advisable for this data? 
+
+*STUDENT INPUT*
+**Discussion on Choice of \( K \):**
+
+Choosing 6 for k might not be advisable for this dataset because k should be an odd number when classifying into multiple categories. Since the iris dataset has 3 classes, an even value for k can lead to ties when determining the class label, especially in cases where the knn belong to different classes. By choosing an odd value for k, we minimize the likelihood of ties and make sure that one class is more likely to be the majority of all the neighbors.
+#
+
+Build a github repository to store your homework assignments.  Share the link in this file.  
+
+*STUDENT INPUT*
+https://github.com/sefbh/HW-2
